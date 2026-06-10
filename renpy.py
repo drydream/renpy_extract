@@ -947,7 +947,8 @@ class App(tk.Tk):
         self._font_var = tk.StringVar(value=DEFAULT_FONT if os.path.isfile(DEFAULT_FONT) else '')
         ttk.Entry(s4lang, textvariable=self._font_var).grid(row=0, column=1, padx=6, sticky='ew')
         ttk.Button(s4lang, text="Browse…", command=self._browse_font).grid(row=0, column=2)
-        ttk.Label(s4lang, text="(.ttf or .otf — Thai font needed to show Thai characters correctly)",
+        ttk.Label(s4lang,
+            text="(built-in Thai font is used automatically — Browse only if you want a different one)",
                   foreground=GRAY).grid(row=1, column=0, columnspan=3, sticky='w', pady=(2, 6))
         self._use_tl_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(s4lang,
@@ -1164,6 +1165,9 @@ class App(tk.Tk):
             messagebox.showerror("Error", "Please scan a game folder first.")
             return
         font_src = self._font_var.get().strip()
+        if (not font_src or not os.path.isfile(font_src)) and os.path.isfile(DEFAULT_FONT):
+            font_src = DEFAULT_FONT          # built-in font — no Browse needed
+            self._font_var.set(DEFAULT_FONT)
         use_tl   = self._use_tl_var.get()
         self._s4_btn.configure(state='disabled')
         self._write_log("\n── Step 4: Thai Language Setup ──")
