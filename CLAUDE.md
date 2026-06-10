@@ -1,6 +1,43 @@
 # CLAUDE.md
 
-Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
+## Project: Ren'Py EN→TH Translation Tool
+
+Standalone Windows app (tkinter GUI) that translates Ren'Py games English→Thai.
+Repo: https://github.com/drydream/renpy_extract
+
+### Files
+
+- `renpy.py` — main app. 5-step GUI workflow: Scan → Prepare (.rpa extract + .rpyc decompile) → Extract text to CSV → (user translates CSV) → Thai font/language setup → Apply translations. `APP_VERSION` constant near the top.
+- `app_updater.py` — auto-update + version rollback via GitHub Releases API. Stdlib only (urllib). Detached `.bat` swap pattern for the locked exe; `cleanup_after_update()` runs on launch.
+- `_renpy_tools/` — bundled tools: `rpatool.py`, `unrpyc.py` + `decompiler/` (primary), `UnRen-Powershell-forall.ps1` (fallback source).
+- `font/` — IBM Plex Sans Thai (OFL). `IBMPlexSansThai-Regular.ttf` is the embedded default — Step 4 uses it automatically, no Browse needed.
+- Workspace files NOT in this repo (separate apps): `rpgm.py`, `unity.py`, `translate.py`.
+
+### Commands
+
+```
+python renpy.py                  # run from source
+python -m PyInstaller --onefile --noconsole --name renpy --add-data "font;font" --add-data "_renpy_tools;_renpy_tools" renpy.py
+gh release create vX.Y.Z dist\renpy.exe --title "vX.Y.Z" --notes "..."
+```
+
+### Release rules
+
+- Bump `APP_VERSION` in `renpy.py` BEFORE building — must match the release tag (`v` prefix on tag only).
+- Asset must be named `renpy.exe` (updater picks asset matching the running exe name).
+- Verify with `python -c "import py_compile; py_compile.compile('renpy.py', doraise=True)"` minimum; user tests the GUI visually.
+
+### Path rules
+
+- Frozen (PyInstaller): bundled data resolves via `sys._MEIPASS`; the real app folder is `os.path.dirname(sys.executable)` (updater writes `temp_update/` there).
+- Dev: everything sits next to the script.
+- Never hardcode absolute paths (the old `E:\h\...` UnRen path is fallback-only).
+
+---
+
+## Behavioral Guidelines
+
+Guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
