@@ -11,7 +11,7 @@ Repo: https://github.com/drydream/renpy_extract
 - `app_updater.py` — auto-update + version rollback via GitHub Releases API. Stdlib only (urllib). Detached `.bat` swap pattern for the locked exe; `cleanup_after_update()` runs on launch.
 - `_renpy_tools/` — bundled tools: `rpatool.py`, `unrpyc.py` + `decompiler/` (primary), `UnRen-Powershell-forall.ps1` (fallback source).
 - `font/` — IBM Plex Sans Thai (OFL). `IBMPlexSansThai-Regular.ttf` is the embedded default — Step 4 uses it automatically, no Browse needed.
-- Sibling projects (separate folders/repos under `D:\claude-workspace\`): `rpgm_tool\`, `unity_tool\`, `translate_tool\` (github.com/drydream/translate_tool).
+- Sibling projects (separate folders/repos under `D:\claude-workspace\every_translate_tool\`): `rpgm_tool\`, `unity_tool\`, `translate_tool\` (github.com/drydream/translate_tool).
 
 ### Commands
 
