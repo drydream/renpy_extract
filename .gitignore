@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+build/
+dist/
+*.spec
+temp_update/
+*.bak
+*.zip
+_listing*.txt
+session-report-*.html
+.write_test
