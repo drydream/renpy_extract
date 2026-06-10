@@ -3,7 +3,7 @@ import base64, csv, io, os, pickle, platform, re, shutil, subprocess, sys, zipfi
 import queue, threading, tkinter as tk
 from tkinter import ttk, filedialog, messagebox, scrolledtext
 
-APP_VERSION = '1.0.0'
+APP_VERSION = '1.1.0'
 try:
     import app_updater
 except Exception:
@@ -943,13 +943,14 @@ class App(tk.Tk):
             text="Step 4 — Thai Language Setup  (font + language option in preferences)", padding=8)
         s4lang.grid(row=5, column=0, sticky='ew', pady=(0, 8))
         s4lang.columnconfigure(1, weight=1)
-        ttk.Label(s4lang, text="Thai font file:").grid(row=0, column=0, sticky='w')
         self._font_var = tk.StringVar(value=DEFAULT_FONT if os.path.isfile(DEFAULT_FONT) else '')
-        ttk.Entry(s4lang, textvariable=self._font_var).grid(row=0, column=1, padx=6, sticky='ew')
-        ttk.Button(s4lang, text="Browse…", command=self._browse_font).grid(row=0, column=2)
+        _font_ok = os.path.isfile(DEFAULT_FONT)
         ttk.Label(s4lang,
-            text="(built-in Thai font is used automatically — Browse only if you want a different one)",
-                  foreground=GRAY).grid(row=1, column=0, columnspan=3, sticky='w', pady=(2, 6))
+            text="Built-in Thai font (IBM Plex Sans Thai) is installed automatically."
+                 if _font_ok else
+                 "WARNING: built-in font missing — font\\IBMPlexSansThai-Regular.ttf not found.",
+            foreground=GRAY if _font_ok else RED).grid(
+            row=1, column=0, columnspan=3, sticky='w', pady=(0, 6))
         self._use_tl_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(s4lang,
             text="Create tl/thai/ translation folder  (adds Thai option in game preferences)",
@@ -1022,15 +1023,6 @@ class App(tk.Tk):
             self._csv_var.set(p)
             self._s5_btn.configure(state='normal')
             self._s5_restore_btn.configure(state='normal')
-
-    def _browse_font(self):
-        p = filedialog.askopenfilename(
-            title="Select Thai font file",
-            filetypes=[("Font files", "*.ttf *.otf"), ("All files", "*.*")])
-        if p:
-            self._font_var.set(p)
-            if self._game_dir:
-                self._s4_btn.configure(state='normal')
 
     def _open_csv_folder(self):
         if self._csv_out and os.path.isfile(self._csv_out):
@@ -1176,6 +1168,9 @@ class App(tk.Tk):
                 setup_font(self._game_dir, font_src, self._log_line)
             elif font_src:
                 self._log_line(f"WARNING: Font file not found: {font_src}")
+            else:
+                self._log_line("WARNING: Built-in font missing — font install skipped. "
+                               "Expected: " + DEFAULT_FONT)
             if not font_src and use_tl:
                 tl_dir = os.path.join(self._game_dir, 'tl', 'thai')
                 os.makedirs(tl_dir, exist_ok=True)
